@@ -1,13 +1,412 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CYBERPULSE Game Site</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      scroll-behavior: smooth;
+      width: 100%;
+      height: 100%;
+      font-family: 'Rajdhani', sans-serif;
+      background: white;
+      overflow-y: hidden; /* ← スクロール禁止を最初だけ */
+      transition: overflow 1s ease;
+    }
+
+    #visual-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #main-visual {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+      z-index: 1;
+    }
+
+    #animated-background {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      z-index: 2;
+    }
+
+    #animated-background canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      z-index: 0;
+    }
+
+    #main-nav {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+    #main-nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+    #main-nav li a {
+      color: #121212;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 16px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: 0.3s;
+    }
+    #main-nav li a:hover {
+      background: #000000;
+      color: white;
+    }
+
+    section {
+      padding: 100px 20px;
+      font-size: 18px;
+    }
+
+    .slider {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.slide {
+  display: none;
+  width: 100%;
+  height: 500px;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slide.active {
+  display: block;
+  animation: fade 1s ease-in-out;
+}
+
+@keyframes fade {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+.slider-nav {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  padding: 0 20px;
+}
+
+.slider-nav button {
+  background: rgba(255,255,255,0.7);
+  border: none;
+  font-size: 24px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  transition: background 0.3s;
+}
+.slider-nav button:hover {
+  background: rgba(0,0,0,0.8);
+  color: white;
+}
+
+.news-section {
+  padding: 60px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.news-title {
+  font-size: 2em;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.news-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.news-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.news-item:hover {
+  transform: translateY(-5px);
+}
+
+.news-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.news-item h3 {
+  font-size: 1.25em;
+  margin: 16px 12px 8px;
+  color: #222;
+}
+
+.news-item p {
+  font-size: 0.95em;
+  color: #555;
+  margin: 0 12px 20px;
+}
+  </style>
 </head>
 <body>
-    <p>
-        cssテストtext
-    </p>
+
+  <div id="visual-container">
+    <img id="main-visual" src="./image/IMG_0888_waifu2x_art_noise2_scale.png" alt="Main Visual" />
+    <div id="animated-background">
+      <canvas id="hex-canvas"></canvas>
+    </div>
+  </div>
+
+  <nav id="main-nav">
+    <ul>
+      <li><a href="#news">News</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#staff">Staff</a></li>
+      <li><a href="#info">Info</a></li>
+    </ul>
+  </nav>
+
+  <!-- ここから下がスクロールして表示される要素 -->
+  <section class="news-section">
+    <h2 class="news-title">News</h2>
+    <div class="news-container">
+      <article class="news-item">
+        <img src="images/news1.jpg" alt="ニュース画像1">
+        <h3>記事タイトル1</h3>
+        <p>ここに記事の概要や紹介文が入ります。</p>
+      </article>
+  
+      <article class="news-item">
+        <img src="images/news2.jpg" alt="ニュース画像2">
+        <h3>記事タイトル2</h3>
+        <p>ここに記事の概要や紹介文が入ります。</p>
+      </article>
+  
+      <article class="news-item">
+        <img src="images/news3.jpg" alt="ニュース画像3">
+        <h3>記事タイトル3</h3>
+        <p>ここに記事の概要や紹介文が入ります。</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="slider-section">
+    <div class="slider">
+      <div class="slide active"><img src="./image/IMG_0884.JPG" alt="Slide 1"></div>
+      <div class="slide"><img src="./image/IMG_0893.JPG" alt="Slide 2"></div>
+      <div class="slide"><img src="./image/IMG_0899.JPG" alt="Slide 3"></div>
+  
+      <div class="slider-nav">
+        <button id="prev">&#10094;</button>
+        <button id="next">&#10095;</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About セクション</h2>
+    <p>サイトやプロジェクトの紹介をここに記述します。</p>
+  </section>
+
+  <section id="staff">
+    <h2>Staff セクション</h2>
+    <p>スタッフの紹介やプロフィールをここに記述します。</p>
+  </section>
+
+  <section id="info">
+    <h2>Info セクション</h2>
+    <p>連絡先やリンクなどの情報をここに記述します。</p>
+  </section>
+
+  <script>
+    const canvas = document.getElementById('hex-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function setCanvasSize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    setCanvasSize();
+
+    const opts = {
+      side: 40,
+      strokeColor: 'rgba(0, 0, 0, 1)',
+      lineWidth: 2,
+      eraseDelay: 10
+    };
+
+    const difX = Math.sqrt(3) * opts.side / 2;
+    const difY = opts.side * 3 / 2;
+    const rad = Math.PI / 6;
+    const cos = Math.cos(rad) * opts.side;
+    const sin = Math.sin(rad) * opts.side;
+
+    let hexes = [];
+
+    function Hex(x, y) {
+      this.x = x;
+      this.y = y;
+      this.erased = false;
+
+      this.xs = [x + cos, x, x - cos, x - cos, x, x + cos];
+      this.ys = [y - sin, y - opts.side, y - sin, y + sin, y + opts.side, y + sin];
+
+      this.draw = function () {
+        if (this.erased) return;
+        ctx.beginPath();
+        ctx.moveTo(this.xs[0], this.ys[0]);
+        for (let i = 1; i < this.xs.length; ++i) {
+          ctx.lineTo(this.xs[i], this.ys[i]);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = opts.strokeColor;
+        ctx.lineWidth = opts.lineWidth;
+        ctx.stroke();
+      };
+
+      this.erase = function () {
+        if (this.erased) return;
+        this.erased = true;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(this.xs[0], this.ys[0]);
+        for (let i = 1; i < this.xs.length; ++i) {
+          ctx.lineTo(this.xs[i], this.ys[i]);
+        }
+        ctx.closePath();
+        ctx.fillStyle = "white";
+        ctx.fill();
+        ctx.lineWidth = opts.lineWidth + 1;
+        ctx.strokeStyle = "white";
+        ctx.stroke();
+        ctx.restore();
+      };
+    }
+
+    function initHexGrid() {
+      hexes = [];
+      const w = canvas.width;
+      const h = canvas.height;
+      for (let x = 0; x < w; x += difX * 2) {
+        let i = 0;
+        for (let y = 0; y < h; y += difY) {
+          ++i;
+          hexes.push(new Hex(x + difX * (i % 2), y));
+        }
+      }
+    }
+
+    function drawInitial() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      hexes.forEach(hex => hex.draw());
+    }
+
+    
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  const total = slides.length;
+
+  const showSlide = (index) => {
+    slides.forEach((s, i) => s.classList.toggle('active', i === index));
+  };
+
+  document.getElementById('prev').addEventListener('click', () => {
+    current = (current - 1 + total) % total;
+    showSlide(current);
+  });
+
+  document.getElementById('next').addEventListener('click', () => {
+    current = (current + 1) % total;
+    showSlide(current);
+  });
+
+  // 自動再生（3秒ごと）
+  setInterval(() => {
+    current = (current + 1) % total;
+    showSlide(current);
+  }, 3000);
+  
+    function eraseOneByOne() {
+      const remaining = [...hexes];
+      function eraseNext() {
+        if (remaining.length === 0) {
+          document.getElementById('animated-background').style.zIndex = 0;
+          document.getElementById('main-visual').style.opacity = 1;
+          document.getElementById('main-nav').style.opacity = 1;
+          document.body.style.overflowY = "auto"; // ← スクロール可能にする
+          return;
+        }
+        const index = Math.floor(Math.random() * remaining.length);
+        const hex = remaining.splice(index, 1)[0];
+        hex.erase();
+        setTimeout(eraseNext, opts.eraseDelay);
+      }
+      eraseNext();
+    }
+
+    
+
+    initHexGrid();
+    drawInitial();
+    eraseOneByOne();
+
+    window.addEventListener('resize', () => {
+      setCanvasSize();
+      initHexGrid();
+      drawInitial();
+      eraseOneByOne();
+    });
+
+    
+  </script>
 </body>
 </html>
