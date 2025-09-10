@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>問題1</h1>
+    <p>
+    CREATE TABLE monster (
+    id INTEGER UNIQUE,
+    name TEXT NOT NULL,
+    system TEXT NOT NULL,
+    HP INTEGER,
+    experience INTEGER,
+    dropitem TEXT
+);
+    </p>
+
+    <h1>問題2</h1>
+    <p>
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (1, 'スライム', 'スライム', 3, 4, 'やくそう');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (2, 'バブルスライム', 'スライム', 10, 12, 'どくけしそう');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (3, 'ミイラおこと', 'ゾンビ', 35, 73, 'すごろくけん');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (4, 'くさったしたい', 'ゾンビ', 98, 120, 'ぬののふく');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (5, 'メタルスライム', 'スライム', 4, 4140, 'すばやさのたね');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (6, 'スカイドラゴン', 'ドラゴン', 80, 800, 'いのちのきわみ');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (7, 'はぐれメタル', 'スライム', 6, 40200, 'しあわせのくつ');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (8, 'ガメゴン', 'ドラゴン', 68, 625, 'てつかぶと');
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (9, 'カンダタ', '???', 300, 2200);
+        INSERT INTO monster (id, name, system, HP, experience, dropitem,) VALUES (10, 'ドラゴン', 'ドラゴン', 120, 2600, 'スタミナのたね');
+
+        
+    </p>
+    <h1>問題3</h1>
+    <p>
+        SELECT id, name, HP FROM monster;
+    </p>
+
+    <h1>問題4</h1>
+    <p>
+        SELECT id, name, system, HP, experience
+        FROM monster
+        WHERE experience >= 1000;
+    </p>
+
+    <h1>問題5</h1>
+    <p>
+        SELECT id, name, dropitem
+        FROM monster
+        WHERE dropitem IS NULL;
+    </p>
+
+    <h1>問題6</h1>
+    <p>
+        SELECT system, AVG(HP) AS avg_HP
+        FROM monster
+        WHERE system = '???';
+    </p>
+
+    <h1>問題7</h1>
+    <p>
+        SELECT system, COUNT(*) AS number_of_records
+        FROM monster
+        GROUP BY system;
+    </p>
+
+    <h1>問題８</h1>
+    <p>
+        SELECT name, system, dropitem
+        FROM monster
+        WHERE dropitem LIKE '%たね'
+        OR dropitem LIKE '%きのみ';
+    </p>
+</body>
+</html>
